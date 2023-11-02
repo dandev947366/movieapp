@@ -44,7 +44,17 @@ contract CyberPunkNFT is ERC721, Ownable{
     require(success, 'withdraw failed');
     }
    function mint(uint256 quantity_) public payable {
+    require(isPublicMintEnabled, 'minting not enabled');
+    require(msg.value == quantity(_ * mintPrice, 'wrong int value');
+    require(totalSupply + quantity_ <= maxSupply, 'sold out');
+    require(walletmint(msg.sender) + quantity_ <= maxWallet, 'exceed max wallet');
     
+    for(uint256 i = 0; i< quantity_ ; i++){
+    
+        uint256 newTokenId = totalSupply +1;
+        totalSupply ++;
+        _safeMint(msg.senfer, newTokenId);
+    }
 }
 
 
