@@ -35,10 +35,17 @@ contract CyberPunkNFT is ERC721, Ownable{
     
     function tokenUri(uint256 tokenId_) public view oeverride returns (string memory){
     
-    
+    require(_exists(tokenId_), 'Token does not exist');
+    return string(abi.encodePacked(baseTokenUri, String.toString(tokenId_),".json"));
     }
-
-
+    
+    function withdraw() external onlyOwner{
+    (bool success,) = withdrawWallet.call{value: address(this).balance}('');
+    require(success, 'withdraw failed');
+    }
+   function mint(uint256 quantity_) public payable {
+    
+}
 
 
 
