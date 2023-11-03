@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Escrow is ReentrancyGuard{
+contract Escrow{
 
    
     address public escAcc; //account of the platform
@@ -74,6 +73,7 @@ contract Escrow is ReentrancyGuard{
         itemsOf[msg.sender].push(item);
         ownerOf[itemId] = msg.sender;
         isAvailable[itemId] = Available.YES;
+        escBal += msg.value;
 
         emit Action (
             itemId,
@@ -136,11 +136,96 @@ contract Escrow is ReentrancyGuard{
 
     function performDevliery(uint itemId) public returns(bool) {
         require(msg.sender == items[itemId].buyer, "You are not the approved buyer");
-        require(items[itemId].provided 
-
-
-
+        require(!items[itemId].provided, "You have already delivered this item");
+        require(!tems[itemId].confirmed, "You have already confirmed this item");
+        
+        items[itemId].provided = true;
+        items[itemId].status = Status.DELIVERY;
+        
+        emit Action (
+            itemId,
+            "ITEM DELIVERY INITIATED",
+            Status.DELIVERY, 
+            msg.sender
+        );
+        return true; 
     }
+    
+    function confirmDelivery(uint itemId, bool provided) public returns (bool){
+        require(msg.sender == ownerOf[itemId], "Only owner allowed");
+        require(items[itemId].provided, "You have already delivered this item");
+        require(items[itemId].status != Status.REFUNDED, "Already refunded, create a new item instead.");
+        
+        if(provided) {
+            uint fee = (item[itemId].amount * escFee) / 100;
+            uint amount = items[itemId].amount - fee;
+            payTo(items[itemId].supplier, amount);
+            escBal -= items[itemId].amount;
+            escAvailBal += fee;
+            
+            items[itemId].confirmed = true;
+            items[itemId].status = Status.CONFIRMED;
+            totalConfirmed++;
+            
+            emit Action (
+            itemId,
+            "ITEM CONFIRMED",
+            Status.CONFIRMED, 
+            msg.sender
+        );
+        } else {
+            items[itemId].status = Status.DISPUTED;
+            
+            emit Action (
+            itemId,
+            "ITEM DISPUTED",
+            Status.DISPUTED, 
+            msg.sender
+        );
+    }
+        return true; 
+        
+    } 
+    
+        function refundItem(uint itemId) public returns(bool){
+        
+            require(msg.sender == escAcc, "Only Escrow admin allowed");
+            require(items[itemId].provided, "You have already delivered this item"); 
+            
+            payTo(items[itemId].owner, items[itemId].amount);
+            escBal -= items[itemId].amount;
+            items[itemId].status = Status.REFUNDED;
+            totalDisputed++;
+            emit Action (
+            itemId,
+            "ITEM REFUNDED",
+            Status.REFUNDED, 
+            msg.sender
+        );
+        return true; 
+        }
+        
+        function withdrawFund(address to, uint amount) public returns(bool){
+        
+            require(msg.sender == escAcc, "Only Escrow admin allowed");
+            require(amount <= escAvailBal, "insufficient fund");
+            
+            payTo(to, amount);
+            escAvailBal -= amount;
+            return true; 
+
+        }
+        
+        
+        function payTo(address to_, uint amount) internal returns(bool){
+
+            (bool succeeded,) = payable(to_).call{value: amount}("");
+            require(succeeded, "Payment failed");
+            return true;
+        }
+    
+    
+    
 
 
 
