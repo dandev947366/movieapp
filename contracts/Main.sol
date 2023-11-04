@@ -4,28 +4,41 @@ contract Main {
 
     // Structure to hold details of Bidder
     struct IParticipant {
-        address public participant,
-        string public email,
-        bool public isParticipate,
-        uint public sessions,
-        Item public items,
-        double public deviation
+        address participant,
+        bool isParticipate,
+        uint sessions,
+        Item items,
+        double deviation
     }
-    mapping(uint => address) public myItem;
+    mapping(uint => address) public item;
+    mapping(address => Item[]) public ownerOf;
     struct Item {
-        uint public id,
-        string public name
+        uint256 id,
+        string name,
+        address owner,
+        uint256 _tokenId,
+        uint256 initialPrice,
+        address previousBidder,
+        uint256 lastBid,
+        address lastBidder,
+        uint256 startTime,
+        uint256 endTime,
+        bool completed,
+        bool active,
+        uint256 auctionId
     }
     
     address public admin;
-
+    mapping(uint => IParticipant[]) public participantList;
+    
+    
 
     function Main() public {
         admin = msg.sender;
     }
 
 
-    // Add a Session Contract address into Main Contract. Use to link Session with Main
+    // Add a Session Contract addrexss into Main Contract. Use to link Session with Main
     function addSession(address session) public {
         // TODO
     }
