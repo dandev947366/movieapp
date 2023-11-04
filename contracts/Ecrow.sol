@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 contract Escrow{
 
    
-    address public escAcc; //account of the platform
+    address public escAcc ; //account of the platform
     uint public escBal; //balance of the Escrow acc
     uint public escAvailBal; //balance of transaction acc
     uint public escFee; //Escrow fee
@@ -19,7 +19,7 @@ contract Escrow{
     mapping(uint => Available) public isAvailable; // check if item is available
 
             //index: 0   1
-    enum Available {NO, YES}
+    enum Available {NO, YES} 
 
     // status of item
     enum Status {
@@ -30,10 +30,10 @@ contract Escrow{
         DISPUTED,
         REFUNDED,
         WITHDRAWED
-    }
+    } 
 
     struct ItemStruct {
-        uint itemId;
+        uint itemId; 
         string purpose;
         uint amount;
         uint timestamp; //when item is created
@@ -137,7 +137,7 @@ contract Escrow{
     function performDevliery(uint itemId) public returns(bool) {
         require(msg.sender == items[itemId].buyer, "You are not the approved buyer");
         require(!items[itemId].provided, "You have already delivered this item");
-        require(!tems[itemId].confirmed, "You have already confirmed this item");
+        require(!items[itemId].confirmed, "You have already confirmed this item");
         
         items[itemId].provided = true;
         items[itemId].status = Status.DELIVERY;
@@ -157,15 +157,15 @@ contract Escrow{
         require(items[itemId].status != Status.REFUNDED, "Already refunded, create a new item instead.");
         
         if(provided) {
-            uint fee = (item[itemId].amount * escFee) / 100;
+            uint fee = (items[itemId].amount * escFee) / 100;
             uint amount = items[itemId].amount - fee;
-            payTo(items[itemId].supplier, amount);
+            payTo(items[itemId].buyer, amount);
             escBal -= items[itemId].amount;
             escAvailBal += fee;
             
             items[itemId].confirmed = true;
             items[itemId].status = Status.CONFIRMED;
-            totalConfirmed++;
+            totalConfirm++;
             
             emit Action (
             itemId,
