@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-
     contract BookStore {
         uint public tax;
         address immutable taxAccount;

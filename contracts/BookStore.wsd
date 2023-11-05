@@ -1,0 +1,33 @@
+@startuml
+
+
+   struct BookStruct {
+            uint id;
+            address seller;
+            string name;
+            string description;
+            string author;
+            uint cost;
+            uint timestamp;
+        }
+uint public tax;
+        address immutable taxAccount;
+        uint public bookId;
+        BookStruct[] books;
+        mapping(address => BookStruct[]) public bookOf;
+        mapping(uint => address) public sellerOf;
+        mapping(uint => bool) public bookExist;
+        
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml
