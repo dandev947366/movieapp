@@ -54,7 +54,7 @@ contract Auction is ERC721URIStorage, ReentrancyGuard {
     
     constructor (uint _royaltyFee) ERC721("Sometoken", "STO"){
     
-        royaltyFee = _royaltyFee;
+        royaltyFee =  ;
         companyAcc = msg.sender;
         
     }

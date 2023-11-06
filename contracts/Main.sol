@@ -37,20 +37,6 @@ contract Main {
         admin = msg.sender;
     }
 
-    event Action (
-        uint256 id,
-        string name,
-        address owner,
-        uint256 _tokenId,
-        uint256 initialPrice,
-
-        uint256 startTime,
-        uint256 endTime,
-        bool completed,
-        bool active,
-        uint256 auctionId
-        address indexed admin
-    );
     
     // Add a Session Contract addrexss into Main Contract. Use to link Session with Main
     function addSession(address session) public {
