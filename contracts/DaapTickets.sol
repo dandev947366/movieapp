@@ -31,6 +31,43 @@ contract DaapTickets is AccessControl, DaapShared, DaapCinema, ERC1155, ERC115Bu
         bool refunded;
     }
     
+    //metadata structure
+    
+    struct TicketBuildStruct {
+        string name;
+        string description;
+        string bgHue;
+        string textHue;
+        string value;
+        TicketStruct ticket;
+    }
+    
+    uint256 public balance;
+    // name and symbol are not defined
+    // in ERC1155 
+    // so we need to declare them
+    uint256 public name;
+    uint256 public symbol;
+    
+    mapping(uint256 => string) private _tokenURIs;
+    mapping(uint256 => TicketBuildStruct) public ticketBuild;
+    // all holders (address type) of this 
+    // particular slot (uint type)
+    mapping(uint256 => address[]) ticketHolders;
+    
+    constructor(
+        address _daapCinemas,
+        string memory _name,
+        string memory _symbol
+    ){
+        //to call Daapcinema functions
+        daapCinema = DaapCinema(_daapCinemas);
+        name = _name;
+        symbol = _symbol;
+    }
+    
+    
+    
     
    
    
