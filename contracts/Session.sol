@@ -1,5 +1,8 @@
 pragma solidity ^0.4.17;
 
+
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "./Main.sol";
 // Interface of Main contract to call from Session contract
 contract Main {
     function addSession(address session) public {}
@@ -9,38 +12,14 @@ contract Session {
     // Variable to hold Main Contract Address when create new Session Contract
     address public mainContract;
     // Variable to hold Main Contract instance to call functions from Main
-    Main MainContract;
+    Main private MainContract;
 
-    struct Item {
-        uint256 id,
-        string name,
-        address owner,
-        uint256 _tokenId,
-        uint256 initialPrice,
-        address previousBidder,
-        uint256 lastBid,
-        address lastBidder,
-        uint256 startTime,
-        uint256 endTime,
-        bool completed,
-        bool active,
-        uint256 auctionId
-    }
+    using Counters for Counters.Counter;
+    Counters.Counter private _totalItem;
     
-    event Action (
-        uint256 id,
-        string name,
-        address owner,
-        uint256 _tokenId,
-        uint256 initialPrice,
-        uint256 startTime,
-        uint256 endTime,
-        bool completed,
-        bool active,
-        uint256 auctionId
-        address indexed admin
-    );
-
+    
+    
+    
     
     function Session(address _mainContract
         // Other arguments
