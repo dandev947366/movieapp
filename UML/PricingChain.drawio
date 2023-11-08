@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="pFDsl6pfXQEPD277YcHR" name="Page-1">
-        <mxGraphModel dx="1016" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1373" dy="802" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -9,13 +9,13 @@
                         <mxRectangle x="30" y="90" width="100" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="3" value="+ Iparticipant: struct&lt;br&gt;+ Item : struct&lt;br&gt;+ bidding: mapping(uint =&amp;gt; mapping(uint =&amp;gt; adress))&lt;br&gt;+ totalParticipants: mapping(uint =&amp;gt; Iparticipant[])&lt;br&gt;+ participantOf: mapping(uint=&amp;gt;address)&lt;br&gt;+ Status: enum&lt;br&gt;+ Action: event&lt;br&gt;+ totalSessions: Counters.Counter&lt;br&gt;+ capacity: uint256&lt;br&gt;+ Session: struct" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;spacing=3;spacingTop=0;html=1;" parent="2" vertex="1">
+                <mxCell id="3" value="+ Iparticipant: struct&lt;br&gt;+ Item : struct&lt;br&gt;+ bidding: mapping(uint =&amp;gt; mapping(uint =&amp;gt; adress))&lt;br&gt;+ totalParticipants: mapping(uint =&amp;gt; Iparticipant[])&lt;br&gt;+ participantOf: mapping(uint=&amp;gt;address)&lt;br&gt;+ Status: enum&lt;br&gt;+ Action: event&lt;br&gt;+ totalItems: Counters.Counter&lt;br&gt;+ totalSessions: Counters.Counter&lt;br&gt;+ capacity: uint256&lt;br&gt;+ sessionExists: mapping(uint=&amp;gt;bool)&lt;br&gt;+ items: mapping(uint=&amp;gt; Item[])&lt;br&gt;+ bids: mapping(uint=&amp;gt;uint[])" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;spacing=3;spacingTop=0;html=1;" parent="2" vertex="1">
                     <mxGeometry y="26" width="320" height="194" as="geometry"/>
                 </mxCell>
                 <mxCell id="4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="2" vertex="1">
                     <mxGeometry y="220" width="320" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="+ addSession()&#10;+ updateSession()&#10;+ deleteSession()&#10;+ getSession()&#10;+ getAllSessions()&#10;+ getSessionsByParticipant()&#10;+ getSessionsByStatus()&#10;+ getItem()&#10;+ setItem()&#10;+ deleteItem()&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="2" vertex="1">
+                <mxCell id="5" value="+ addSession()&#10;+ updateSession()&#10;+ deleteSession()&#10;+ getSession()&#10;+ getAllSessions()&#10;+ getSessionsByParticipant()&#10;+ getSessionsByStatus()&#10;+ getItem()&#10;+ setItem()&#10;+ deleteItem()&#10;+ createItem()&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="2" vertex="1">
                     <mxGeometry y="260" width="320" height="220" as="geometry"/>
                 </mxCell>
                 <mxCell id="19" style="edgeStyle=none;html=1;entryX=0.259;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#262626;strokeColor=#262626;" parent="1" source="7" target="5" edge="1">
@@ -26,7 +26,7 @@
                         <mxRectangle x="30" y="90" width="100" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="8" value="+ participant: address&#10;+ isParticipate: bool&#10;+ NoOfSession: uint&#10;+ deviation: uint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="7" vertex="1">
+                <mxCell id="8" value="+ participant: address&#10;+ isParticipate: bool&#10;+ NoOfSession: uint&#10;+ deviation: uint&#10;+ NoOfBid: uint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="7" vertex="1">
                     <mxGeometry y="26" width="160" height="114" as="geometry"/>
                 </mxCell>
                 <mxCell id="20" style="edgeStyle=none;html=1;fontColor=#262626;strokeColor=#262626;" parent="1" source="12" target="5" edge="1">
@@ -37,7 +37,7 @@
                         <mxRectangle x="30" y="90" width="100" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="13" value="+ id: uint256&#10;+ name: string&#10;+ description: string&#10;+ owner: address&#10;+ _tokenId: uint256&#10;+ imageUri: string&#10;+ participants: mapping(uint=&gt; address[]) &#10;+ initialPrice: uint256&#10;+ finalPrice: uint256&#10;&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="12" vertex="1">
+                <mxCell id="13" value="+ id: uint256&#10;+ name: string&#10;+ description: string&#10;+ owner: address&#10;+ imageUri: string&#10;+ initialPrice: uint256&#10;+ finalPrice: uint256&#10;&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="12" vertex="1">
                     <mxGeometry y="26" width="250" height="264" as="geometry"/>
                 </mxCell>
                 <mxCell id="14" value="Session.sol" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#647687;strokeColor=#314354;fontColor=#FFFFFF;" parent="1" vertex="1">
@@ -45,13 +45,13 @@
                         <mxRectangle x="30" y="90" width="100" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="15" value="- _totalItems: Counters.Counter&#10;+ totalParticipant: uint256&#10;+ _NoOfParticipant: Counters.Counter&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="14" vertex="1">
+                <mxCell id="15" value="- _totalItems: Counters.Counter&#10;+ totalParticipant: uint256???&#10;+ _NoOfParticipant: Counters.Counter&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="14" vertex="1">
                     <mxGeometry y="26" width="240" height="114" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="" style="line;strokeWidth=1;fillColor=default;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontColor=#262626;html=1;" parent="14" vertex="1">
                     <mxGeometry y="140" width="240" height="8" as="geometry"/>
                 </mxCell>
-                <mxCell id="17" value="+ startBidding()&#10;+ completeBidding()&#10;+ completeSession()&#10;&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="14" vertex="1">
+                <mxCell id="17" value="+ joinSession()&#10;+ startBidding()&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="14" vertex="1">
                     <mxGeometry y="148" width="240" height="110" as="geometry"/>
                 </mxCell>
                 <mxCell id="16" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="14" vertex="1">
@@ -60,15 +60,15 @@
                 <mxCell id="21" value="" style="line;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;html=1;fillColor=#262626;strokeColor=#262626;" parent="1" vertex="1">
                     <mxGeometry x="360" y="170" width="150" height="8" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="Session" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#647687;strokeColor=#314354;fontColor=#FFFFFF;" vertex="1" parent="1">
+                <mxCell id="22" value="Session" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#647687;strokeColor=#314354;fontColor=#FFFFFF;" parent="1" vertex="1">
                     <mxGeometry x="510" y="370" width="160" height="140" as="geometry">
                         <mxRectangle x="30" y="90" width="100" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="23" value="+ sessionId: uint&#10;+ item: Item&#10;+ participants: Iparticipant[]&#10;+ status: Status&#10;+ completed: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" vertex="1" parent="22">
+                <mxCell id="23" value="+ sessionId: uint&#10;+ item: Item&#10;+ participants: Iparticipant[]&#10;+ status: Status&#10;+ completed: bool&#10;+ sessionContract: address&#10;+ deleted: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#262626;" parent="22" vertex="1">
                     <mxGeometry y="26" width="160" height="114" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" style="edgeStyle=none;html=1;entryX=0.259;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#262626;strokeColor=#262626;" edge="1" parent="1">
+                <mxCell id="24" style="edgeStyle=none;html=1;entryX=0.259;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#262626;strokeColor=#262626;" parent="1" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="589.3355381784729" y="368.44" as="sourcePoint"/>
                         <mxPoint x="590.6700000000001" y="307.99999999999994" as="targetPoint"/>
