@@ -27,9 +27,9 @@ contract Session {
         bool deleted,
         bool completed
     }
-    
+    //create new session contract
     function Session(address _mainContract
-        // Other arguments
+        mainContract = _mainContract;
     ) public {
         // Get Main Contract instance
         mainContract = _mainContract;

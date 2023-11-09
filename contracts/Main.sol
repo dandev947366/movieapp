@@ -8,7 +8,7 @@ contract Main is AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private _totalSessions;
     Counters.Counter private _totalItems;
-    
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     uint256 private capacity;
 
     struct Iparticipant{
@@ -25,6 +25,7 @@ contract Main is AccessControl {
         string description,
         address owner,
         string imageURI,
+        bool completed,
         uint256 initialPrice,
         uint256 finalPrice
     }
@@ -81,7 +82,6 @@ contract Main is AccessControl {
     
     function addSession(
         address _session
-        uint _itemId,
     ) public onlyOwner returns(Session memory){
         require(_itemId > 0, "Item ID cannot be empty");
         require(bytes(_session).length > 0, "Session address cannot be empty");
@@ -184,13 +184,23 @@ contract Main is AccessControl {
         
     }
     
-    function deleteItem(uint256 _id) public onlyOwner returns(bool){
+    function deleteItem(uint256 _id) public returns(bool){
         require(itemExists[_id], "Item not found");
+        require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not a session contract");
         
         items[_id].deleted = true;
         itemExists[_id] = false;
         
         emit Action("Item deleted successfully");
+    
+    }
+    
+    function completeItem(uint256 _id) public returns(bool){
+        require(itemExists[_id], "Item not found");
+        require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not a session contract");
+        
+        items[_id].completed = true;
+        emit Action("Item completed successfully");
     
     }
 
