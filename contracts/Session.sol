@@ -9,7 +9,7 @@ import "./Shared.sol";
 //     function addSession(address session) public {}
 // }
 
-contract Session is Shared, Main{
+contract Session is Shared{
     // Variable to hold Main Contract Address when create new Session Contract
     //address public mainContract;
     // Variable to hold Main Contract instance to call functions from Main
@@ -21,13 +21,15 @@ contract Session is Shared, Main{
     Counters.Counter private _NoOfSession;
     // list of participants for one session
     //mapping(uint => address[]) sessionParticipants;
-
+    // mapping(uint=> Iparticipant) participantOf;
+    // mapping(uint => Iparticipant[]) sessionParticipants;
+    mapping(uint256 => mapping(address=>uint256)) bids;
     constructor(
         address _mainContract
     ){
         //to call Daapcinema functions
         mainContract = Main(_mainContract);
-
+       
     }
     // constructor(address _mainContract)public {
     //     // Get Main Contract instance
@@ -60,33 +62,77 @@ contract Session is Shared, Main{
     //     return _sessionId;
     //     //emit Action ("Join session successfully");
     // }
- struct SessionStruct{
-        uint256 itemId;
-        uint256 sessionId;
-        address[] participantList;
-        Status status;
-        bool deleted;
-        bool existed;
-        bool completed;
-        uint256 NoOfParticipant;
-    }
+
     function joinSession(uint256 _sessionId) public returns(Iparticipant memory){
 
-        Session memory session =. mainContract.getSession(_sessionId);
+        SessionStruct memory session =  mainContract.getSession(_sessionId);
         require(session.NoOfParticipant < 10, "Maximum amount of participants reached.");
         require(!session.completed,"Session completed.");
         require(!session.deleted,"Session deleted.");
-        require(!session.existed,"Session not exist.");
+        //require(!session.existed,"Session not exist.");
         
         Iparticipant memory joiner;
         joiner.participantWallet = msg.sender;
         joiner.isParticipate = true;
         joiner.NoOfSession += 1;
         participantOf[_sessionId] = joiner;
-        sessionParticipants[_sessionId].push(joiner);
+        participantList[_sessionId].push(joiner);
 
         emit Action ("Join session successfully");
         return joiner;
+
+    }
+
+    function getParticipants(uint256 _sessionId) public view returns(Iparticipant[] memory){
+         return participantList[_sessionId];
+    }
+
+    function startPricing(uint256 _sessionId, uint256 _itemId, uint256 _amount) public {
+        //require(itemExists[_id], "Item not found");
+        //require(sessionExists[sessionId], "Session not Exists");
+        //require(msg.value >= _amount, "Insufficient balance");
+        require(participantOf[_sessionId].participantWallet == msg.sender, "Invalid participant.");
+        Item memory item;
+        item.id = _itemId;
+        item.status = Status.RUNNING;
+        bids[_sessionId][msg.sender] = _amount;
+        participantOf[_sessionId].NoOfBids++; 
+        participantOf[_sessionId].NoOfBids++;
+        participantOf[_sessionId].isParticipate = true;
+        participantOf[_sessionId].participantWallet = msg.sender;
+        bidList[_sessionId][msg.sender].push(_amount);
+        emit Action ("Bid item successfully");
+    
+    }
+    function getBidList(address _participant, uint256 _sessionId) public view returns(uint256[] memory){
+
+        return bidList[_sessionId][_participant];
+    }
+    function calcDeviation(address _participant, uint256 _sessionId) public view returns(uint256){
+        // cac so bid cho 1 session
+        // get total bid times
+
+        /**
+            Giả sử chúng ta có các quan sát 5, 7, 3 và 7, tổng cộng 22. Sau đó, bạn sẽ chia 22 cho số quan sát, trong trường hợp này là 4 được 5,5. Ta có trung bình là: x̄ = 5,5 và N = 4.
+
+            Phương sai được xác định bằng cách trừ mỗi quan sát cho giá trị trung bình, ta được lần lượt các kết quả là -0,5, 1,5, -2,5 và 1,5. Mỗi giá trị này sau đó được bình phương, bằng 0,25, 2,25, 6,25 và 2,25. Công các giá trị bình phương sau đó chia cho giá trị N trừ 1, bằng 3, cho kêt quả phương sai xấp xỉ 3,67.
+
+            Căn bậc hai của phương sai có độ lệch chuẩn là khoảng 1.915.
+
+        **/
+       uint256[] memory totalBids = getBidList(_participant, _sessionId);
+       uint256 sum;
+       uint256 average;
+       uint256 variant;
+       for(uint256 i = 0; i < totalBids.length; i++){
+            sum += totalBids[i];
+       }
+       average = sum / totalBids.length;
+       for(uint256 i = 0; i < totalBids.length; i++){
+            sum += totalBids[i];
+       }
+
+
 
     }
 
@@ -94,24 +140,14 @@ contract Session is Shared, Main{
 
 
 
+  }
 
-    // function startBidding(unint256 _sessionId, uint256 _itemId, uint256 _amount) public returns(bool){
-    //     require(itemExists[_id], "Item not found");
-    //     require(sessionExists[sessionId], "Session not Exists");
-    //     require(msg.value >= _amount, "Insufficient balance");
-    //     require(bids[_itemId][_sessionId] <= 10, "Maximum participant reached");
-        
-    //     bids[_itemId][_sessionId].push(_amount);
-        
-    //     Iparticipant memory participant;
-    //     participant[msg.sender].NoOfBids++;
-        
-    //     Session memory session;
-    //     session[_sessionId].participantList.push(msg.sender);
-    //     session[_sessionId].status = RUNNING;
-        
-    //     emit Action ("Bid item successfully");
-    // }
+
+
+
+
+
     
     
-}
+    
+

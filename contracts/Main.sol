@@ -18,6 +18,7 @@ contract Main is Shared{
     struct Item {
         uint256 id;
         string name;
+        Status status;
         string description;
         address owner;
         string imageURI;
