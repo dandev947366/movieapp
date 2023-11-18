@@ -1,75 +1,117 @@
-pragma solidity ^0.4.17;
-
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./Main.sol";
-// Interface of Main contract to call from Session contract
-contract Main {
-    function addSession(address session) public {}
-}
+import "./Shared.sol";
+//Interface of Main contract to call from Session contract
+// contract Main {
+//     function addSession(address session) public {}
+// }
 
-contract Session {
+contract Session is Shared, Main{
     // Variable to hold Main Contract Address when create new Session Contract
-    address public mainContract;
+    //address public mainContract;
     // Variable to hold Main Contract instance to call functions from Main
-    Main private MainContract;
+    Main private mainContract;
 
     using Counters for Counters.Counter;
     Counters.Counter private _totalItem;
     Counters.Counter private _NoOfParticipant;
-    
-    struct Session{
-        address contractAddress,
-        uint256 id,
-        uint256 itemId,
-        Iparticipant[] participantList,
-        Status status,
-        bool deleted,
-        bool completed
+    Counters.Counter private _NoOfSession;
+    // list of participants for one session
+    //mapping(uint => address[]) sessionParticipants;
+
+    constructor(
+        address _mainContract
+    ){
+        //to call Daapcinema functions
+        mainContract = Main(_mainContract);
+
     }
+    // constructor(address _mainContract)public {
+    //     // Get Main Contract instance
+    //     mainContract = _mainContract;
+    //     MainContract = Main(_mainContract);
+    //     MainContract.addSession(address(this));
+    // }
     //create new session contract
-    function Session(address _mainContract
-        mainContract = _mainContract;
-    ) public {
-        // Get Main Contract instance
-        mainContract = _mainContract;
-        MainContract = Main(_mainContract);
+    // function Session(address _mainContract) public {
+    //     // Get Main Contract instance
+    //     mainContract = _mainContract;
+    //     MainContract = Main(_mainContract);
         
-        // TODO: Init Session contract
+    //     // TODO: Init Session contract
         
-        // Call Main Contract function to link current contract.
-        MainContract.addSession(address(this));
+    //     // Call Main Contract function to link current contract.
+    //     MainContract.addSession(address(this));
+    // }
+    // function joinSession(uint256 _sessionId) public returns(uint256){
+    //     //require(sessionExists[_sessionId], "Session not Exists");
+    //     sessionOf[_sessionId].NoOfParticipant ++;
+    //     sessionOf[_sessionId].participantList.push(msg.sender);
+    //     require(!sessions[_sessionId].completed, "Session completed");
+    //     _NoOfParticipant.increment();
+    //     Iparticipant memory participant;
+    //     participant.participantWallet = msg.sender;
+    //     participant.isParticipate = true;
+    //     participant.NoOfSession++;
+    //    // participants[_sessionId].push(participant);
+    //     return _sessionId;
+    //     //emit Action ("Join session successfully");
+    // }
+ struct SessionStruct{
+        uint256 itemId;
+        uint256 sessionId;
+        address[] participantList;
+        Status status;
+        bool deleted;
+        bool existed;
+        bool completed;
+        uint256 NoOfParticipant;
     }
-    
-    function joinSession(unint256 _sessionId) public returns(bool){
-        require(sessionExists[sessionId], "Session not Exists");
-        require(!sessions[_sessionId].completed, "Session completed");
-        _NoOfParticipant++;
-        Iparticipant memory participant;
-        participant[msg.sender].participantWallet = msg.sender;
-        participant[msg.sender].isParticipate = true;
-        participant[msg.sender].NoOfSession++;
+    function joinSession(uint256 _sessionId) public returns(Iparticipant memory){
+
+        Session memory session =. mainContract.getSession(_sessionId);
+        require(session.NoOfParticipant < 10, "Maximum amount of participants reached.");
+        require(!session.completed,"Session completed.");
+        require(!session.deleted,"Session deleted.");
+        require(!session.existed,"Session not exist.");
         
+        Iparticipant memory joiner;
+        joiner.participantWallet = msg.sender;
+        joiner.isParticipate = true;
+        joiner.NoOfSession += 1;
+        participantOf[_sessionId] = joiner;
+        sessionParticipants[_sessionId].push(joiner);
+
         emit Action ("Join session successfully");
+        return joiner;
+
     }
 
-    function startBidding(unint256 _sessionId, uint256 _itemId, uint256 _amount) public returns(bool){
-        require(itemExists[_id], "Item not found");
-        require(sessionExists[sessionId], "Session not Exists");
-        require(msg.value >= _amount, "Insufficient balance");
-        require(bids[_itemId][_sessionId] <= 10, "Maximum participant reached");
+
+
+
+
+
+    // function startBidding(unint256 _sessionId, uint256 _itemId, uint256 _amount) public returns(bool){
+    //     require(itemExists[_id], "Item not found");
+    //     require(sessionExists[sessionId], "Session not Exists");
+    //     require(msg.value >= _amount, "Insufficient balance");
+    //     require(bids[_itemId][_sessionId] <= 10, "Maximum participant reached");
         
-        bids[_itemId][_sessionId].push(_amount)
+    //     bids[_itemId][_sessionId].push(_amount);
         
-        Iparticipant memory participant;
-        participant[msg.sender].NoOfBids++;
+    //     Iparticipant memory participant;
+    //     participant[msg.sender].NoOfBids++;
         
-        Session memory session;
-        session[_sessionId].participantList.push(msg.sender);
-        session[_sessionId].status = RUNNING;
+    //     Session memory session;
+    //     session[_sessionId].participantList.push(msg.sender);
+    //     session[_sessionId].status = RUNNING;
         
-        emit Action ("Bid item successfully");
-    }
+    //     emit Action ("Bid item successfully");
+    // }
     
     
 }

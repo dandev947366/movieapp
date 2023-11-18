@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./Session.sol";
 import "./Shared.sol";
 //import "@openzeppelin/contracts/access/AccessControl.sol";
-contract Main is Shared{
+contract Main is Shared, Session{
    
     using Counters for Counters.Counter;
     Counters.Counter private _totalSessions;
@@ -13,8 +13,7 @@ contract Main is Shared{
     uint256 private capacity;
     address admin;
     //bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    
-   
+
     struct Item {
         uint256 id;
         string name;
@@ -28,12 +27,16 @@ contract Main is Shared{
     }
     // list of items based on sessionID
     mapping(uint => Item) items;
+    // sessionStruct with unique ID
+    //mapping(uint => Session) sessions;
+    // amount of bid from participant's address, for session ID
     mapping(uint => mapping(address => uint)) bidOf;
     // list of participants based on session ID
     mapping(uint => Iparticipant[]) totalParticipantsOf;
     // participant's address of session ID
     mapping(uint => address) participantOf;
-
+    // Session ID, check if session is exists
+    mapping(uint256 => bool) sessionExists;
     // Item ID, check if item is exists
     mapping(uint256 => bool) itemExists;
     // array of bids , based on session ID
@@ -98,7 +101,7 @@ contract Main is Shared{
         items[_itemId].initialPrice = _initialPrice;
         //items[_itemId].owner = admin;
         items[_itemId].completed = false;
-        itemExists[_itemId] = true;
+        //itemExists[_itemId] = true;
         emit Action ("Update Item successfully");
         return items[_itemId];
 
@@ -122,18 +125,18 @@ contract Main is Shared{
     }
 
     function addSession(
-        uint256 _itemId
+        address _sessionContract,
+        uint256 _sessionId
     ) public onlyOwner returns(SessionStruct memory){
-        require(_itemId > 0, "Item ID cannot be empty");
+        require(_sessionId > 0, "Item ID cannot be empty");
         _totalSessions.increment();
-        uint256 sessionId = _totalSessions.current();
         SessionStruct memory session;
-
-        session.itemId = _itemId;
-        session.sessionId = sessionId;
+        session.contractAddress = _sessionContract;
+        session.sessionId = _sessionId;
         session.status = Status.OPEN;
-        session.existed = true;
-        sessionOf[sessionId] = session;
+        sessionExists[_totalSessions.current()] = true;
+        sessionOf[_sessionId] = session;
+        sessionExists[_sessionId] = true;
         sessions.push(session);
         emit Action ("Add session successfully");
         return session;
@@ -143,7 +146,7 @@ contract Main is Shared{
         uint256 _sessionId,
         Status _status
     ) public onlyOwner {
-        //require(sessionExists[_sessionId], "Session not found");
+        require(sessionExists[_sessionId], "Session not found");
         sessionOf[_sessionId].status = _status;
         emit Action ("Update session successfully");
     }
@@ -156,7 +159,7 @@ contract Main is Shared{
         return sessions;
     }
     function deleteSession(uint256 _sessionId) public onlyOwner{
-       // require(sessionExists[_sessionId], "Session not Exsists");
+        require(sessionExists[_sessionId], "Session not Exsists");
         
         sessionOf[_sessionId].deleted = true;
         sessionExists[_sessionId] = false;
