@@ -6,15 +6,9 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Main.sol";
 import "./Shared.sol";
 
-//Interface of Main contract to call from Session contract
-// contract Main {
-//     function addSession(address session) public {}
-// }
 
 contract Session is Shared {
-    // Variable to hold Main Contract Address when create new Session Contract
-    //address public mainContract;
-    // Variable to hold Main Contract instance to call functions from Main
+   
     Main private mainContract;
     using Math for uint;
 
@@ -22,48 +16,14 @@ contract Session is Shared {
     Counters.Counter private _totalItem;
     Counters.Counter private _NoOfParticipant;
     Counters.Counter private _NoOfSession;
-    // list of participants for one session
-    //mapping(uint => address[]) sessionParticipants;
-    // mapping(uint=> Iparticipant) participantOf;
-    // mapping(uint => Iparticipant[]) sessionParticipants;
+    
     mapping(uint256 => mapping(address => uint256)) bids;
-
+   // mapping(uint256=> uint256[]) averageBidList ;
     constructor(address _mainContract) {
         //to call Daapcinema functions
         mainContract = Main(_mainContract);
     }
 
-    // constructor(address _mainContract)public {
-    //     // Get Main Contract instance
-    //     mainContract = _mainContract;
-    //     MainContract = Main(_mainContract);
-    //     MainContract.addSession(address(this));
-    // }
-    //create new session contract
-    // function Session(address _mainContract) public {
-    //     // Get Main Contract instance
-    //     mainContract = _mainContract;
-    //     MainContract = Main(_mainContract);
-
-    //     // TODO: Init Session contract
-
-    //     // Call Main Contract function to link current contract.
-    //     MainContract.addSession(address(this));
-    // }
-    // function joinSession(uint256 _sessionId) public returns(uint256){
-    //     //require(sessionExists[_sessionId], "Session not Exists");
-    //     sessionOf[_sessionId].NoOfParticipant ++;
-    //     sessionOf[_sessionId].participantList.push(msg.sender);
-    //     require(!sessions[_sessionId].completed, "Session completed");
-    //     _NoOfParticipant.increment();
-    //     Iparticipant memory participant;
-    //     participant.participantWallet = msg.sender;
-    //     participant.isParticipate = true;
-    //     participant.NoOfSession++;
-    //    // participants[_sessionId].push(participant);
-    //     return _sessionId;
-    //     //emit Action ("Join session successfully");
-    // }
 
     function joinSession(
         uint256 _sessionId
@@ -75,7 +35,6 @@ contract Session is Shared {
         );
         require(!session.completed, "Session completed.");
         require(!session.deleted, "Session deleted.");
-        //require(!session.existed,"Session not exist.");
 
         Iparticipant memory joiner;
         joiner.participantWallet = msg.sender;
@@ -94,6 +53,35 @@ contract Session is Shared {
         return participantList[_sessionId];
     }
 
+    function calcFinalPrice(uint256 _sessionId) public view returns (uint256){
+        // list of all participants
+        Iparticipant[] memory pList = participantList[_sessionId];
+    
+        uint256 bid;
+        uint256 sum;
+        uint256 finalPrice;
+        address pAddress;
+        for(uint256 i =0; i< pList.length;i++){
+            pAddress = pList[i].participantWallet;
+            bid = getBidAverage(_sessionId, pAddress);
+            sum += bid;
+        }
+        finalPrice = sum / pList.length;
+        return finalPrice;
+    }
+
+    // average bid price of a participant
+    function getBidAverage(uint _sessionId, address _participant) public view returns (uint256){
+        uint256[] memory bList = bidList[_sessionId][_participant];
+        uint256 sum;
+        uint256 average;
+        for (uint256 i =0; i <bList.length;i++){
+            sum += bList[i];
+        }
+        average = sum/bList.length;
+        return average;
+    }
+    
     function startPricing(
         uint256 _sessionId,
         uint256 _itemId,
@@ -120,17 +108,7 @@ contract Session is Shared {
         bidList[_sessionId][msg.sender].push(_amount);
         emit Action("Bid item successfully");
     }
-
-    function castUintToInt(uint256 value) public pure returns (int256) {
-        require(value <= uint256(int256(-1)), "Value exceeds int256 range");
-        return int256(value);
-    }
-
-    function castIntToUint(int256 value) public pure returns (uint256) {
-        require(value >= 0, "Value is negative"); // Check if the value is non-negative
-        return uint256(value);
-    }
-
+    
     function getBidList(
         uint256 _sessionId,
         address _participant
@@ -184,6 +162,16 @@ contract Session is Shared {
         deviation = sqrt(variantSum);
 
         return deviation;
+    }
+
+    function castUintToInt(uint256 value) public pure returns (int256) {
+        require(value <= uint256(int256(-1)), "Value exceeds int256 range");
+        return int256(value);
+    }
+
+    function castIntToUint(int256 value) public pure returns (uint256) {
+        require(value >= 0, "Value is negative"); // Check if the value is non-negative
+        return uint256(value);
     }
 
     function sqrt(int256 x) internal pure returns (int256 y) {
