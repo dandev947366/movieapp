@@ -12,6 +12,7 @@ contract Shared{
         RUNNING,
         END
     }
+    
     struct Item {
         uint256 id;
         string name;
@@ -32,9 +33,9 @@ contract Shared{
         bool deleted;
         bool existed;
         bool completed;
+        address winner;
         uint256 NoOfParticipant;
     }
-    // mapping based on sessionId
     mapping(uint256 => bool) sessionExists;
     mapping(uint => SessionStruct) sessionOf;
     mapping(uint => Iparticipant[]) participantList;
@@ -42,9 +43,6 @@ contract Shared{
     mapping(uint256 => mapping(address=>uint256[])) bidList;
     mapping(int256 => mapping(address=>int256[])) bidListCal;
     mapping(uint256 => mapping(address => uint256)) bidAverages;
-    mapping(uint256 => uint256[]) listToCalc;
-    mapping(uint256 => uint256[]) currentList;
-    mapping(uint256 => int256[]) currentModulus;
     
     SessionStruct[] sessions;
     struct Iparticipant{
