@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Main.sol";
 import "./Shared.sol";
 //Interface of Main contract to call from Session contract
@@ -14,6 +15,7 @@ contract Session is Shared{
     //address public mainContract;
     // Variable to hold Main Contract instance to call functions from Main
     Main private mainContract;
+    using Math for uint;
 
     using Counters for Counters.Counter;
     Counters.Counter private _totalItem;
@@ -100,19 +102,80 @@ contract Session is Shared{
         participantOf[_sessionId].NoOfBids++;
         participantOf[_sessionId].isParticipate = true;
         participantOf[_sessionId].participantWallet = msg.sender;
+        int sId = castUintToInt(_sessionId);
+        int amount = castUintToInt(_amount);
+        bidListCal[sId][msg.sender].push(amount);
         bidList[_sessionId][msg.sender].push(_amount);
         emit Action ("Bid item successfully");
     
     }
-    function getBidList(address _participant, uint256 _sessionId) public view returns(uint256[] memory){
+    function castUintToInt(uint256 value) public pure returns (int256) {
+    require(value <= uint256(int256(-1)), "Value exceeds int256 range");
+    return int256(value);
+    }
+    function castIntToUint(int256 value) public pure returns (uint256) {
+    require(value >= 0, "Value is negative"); // Check if the value is non-negative
+    return uint256(value);
+    }
+
+    function getBidList(uint256 _sessionId, address _participant) public view returns(uint256[] memory){
 
         return bidList[_sessionId][_participant];
     }
-    function calcDeviation(address _participant, uint256 _sessionId) public view returns(uint256){
-        // cac so bid cho 1 session
-        // get total bid times
+    function getTotalBids(uint256 _sessionId, address _participant) public view returns (uint256) {
+        uint256[] memory totalBids = getBidList(_sessionId, _participant);
+        return totalBids.length;
+    }
+    function calcDeviation(address _participant, uint256 _sessionId) public view returns (int256) {
+    //uint256[] memory totalBids = getBidList(_sessionId, _participant);
+    int sId = castUintToInt(_sessionId);
+    uint256 total = getTotalBids(_sessionId, _participant);
+    int256 totalNew = castUintToInt(total);
+    int256[] memory totalBids = bidListCal[sId][msg.sender];
+    int256 sum;
+    int256 average;
+    int256 variantSum;
+    int256 v;
+    int256 deviation;
+    //int256 total = totalBids.length;
+    // Calculate the sum of bids
+    for(uint256 i = 0; i < totalBids.length; i++) {
+        sum += totalBids[i];
+    }
+    
+    // Calculate the average
+    average = sum / totalNew;
+
+    // Calculate the sum of squared differences
+    for(uint256 i = 0; i < totalBids.length; i++) {
+        v = totalBids[i] - average;
+        v = v * v;
+        variantSum += v;
+    }
+
+    // Calculate variance
+    variantSum = variantSum / totalNew;
+
+    // Calculate standard deviation (square root of variance)
+    deviation = sqrt(variantSum);
+
+    return deviation;
+}
+
+
+function sqrt(int256 x) internal pure returns (int256 y) {
+    int256 z = (x + 1) / 2;
+    y = x;
+    while (z < y) {
+        y = z;
+        z = (x / z + z) / 2;
+    }
+}
+
+    // function calcDeviation(address _participant, uint256 _sessionId) public returns(uint256){
 
         /**
+            Source: https://vietnambiz.vn/do-lech-chuan-standard-deviation-la-gi-cong-thuc-tinh-do-lech-chuan-2019110216112891.htm
             Giả sử chúng ta có các quan sát 5, 7, 3 và 7, tổng cộng 22. Sau đó, bạn sẽ chia 22 cho số quan sát, trong trường hợp này là 4 được 5,5. Ta có trung bình là: x̄ = 5,5 và N = 4.
 
             Phương sai được xác định bằng cách trừ mỗi quan sát cho giá trị trung bình, ta được lần lượt các kết quả là -0,5, 1,5, -2,5 và 1,5. Mỗi giá trị này sau đó được bình phương, bằng 0,25, 2,25, 6,25 và 2,25. Công các giá trị bình phương sau đó chia cho giá trị N trừ 1, bằng 3, cho kêt quả phương sai xấp xỉ 3,67.
@@ -120,19 +183,28 @@ contract Session is Shared{
             Căn bậc hai của phương sai có độ lệch chuẩn là khoảng 1.915.
 
         **/
-       uint256[] memory totalBids = getBidList(_participant, _sessionId);
-       uint256 sum;
-       uint256 average;
-       uint256 variant;
-       for(uint256 i = 0; i < totalBids.length; i++){
-            sum += totalBids[i];
-       }
-       average = sum / totalBids.length;
-       for(uint256 i = 0; i < totalBids.length; i++){
-            sum += totalBids[i];
-       }
+    //    uint256[] memory totalBids = getBidList(_sessionId, _participant);
+
+    //    for(uint256 i = 0; i < totalBids.length; i++){
+    //         sum += totalBids[i];
+    //         total ++;
+    //    }
+    //    average = sum / total;
+    //    for(uint256 i = 0; i < totalBids.length; i++){
+        
+    //         v = totalBids[i] - average;
+    //         v = v**2;
+    //         variantSum += v;
+        
+    //    }
+    //    variantSum = variantSum/(total-1);
+    //    deviation = sqrt(variantSum);
+    //    return variantSum;
+
+    // }
 
 
+    
 
     }
 
@@ -140,7 +212,7 @@ contract Session is Shared{
 
 
 
-  }
+  
 
 
 

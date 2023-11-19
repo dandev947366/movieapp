@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract Shared{
 
     event Action (string actionType);
-    
     Status public status;
     enum Status {
         OPEN,
@@ -14,6 +13,18 @@ contract Shared{
         END
     }
 
+    struct Item {
+        uint256 id;
+        string name;
+        Status status;
+        string description;
+        address owner;
+        string imageURI;
+        bool completed;
+        bool deleted;
+        uint256 initialPrice;
+        uint256 finalPrice;
+    }
 
     struct SessionStruct{
         uint256 itemId;
@@ -29,6 +40,7 @@ contract Shared{
     mapping(uint => Iparticipant[]) participantList;
     mapping(uint=> Iparticipant) participantOf;
     mapping(uint256 => mapping(address=>uint256[])) bidList;
+    mapping(int256 => mapping(address=>int256[])) bidListCal;
     SessionStruct[] sessions;
     struct Iparticipant{
         address participantWallet;

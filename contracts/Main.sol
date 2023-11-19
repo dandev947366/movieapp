@@ -15,31 +15,20 @@ contract Main is Shared{
     //bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     
    
-    struct Item {
-        uint256 id;
-        string name;
-        Status status;
-        string description;
-        address owner;
-        string imageURI;
-        bool completed;
-        bool deleted;
-        uint256 initialPrice;
-        uint256 finalPrice;
-    }
     // list of items based on sessionID
     mapping(uint => Item) items;
     mapping(uint => mapping(address => uint)) bidOf;
     // list of participants based on session ID
     mapping(uint => Iparticipant[]) totalParticipantsOf;
     // participant's address of session ID
-    mapping(uint => address) participantOf;
+    //mapping(uint => address) participantOf;
 
     // Item ID, check if item is exists
     mapping(uint256 => bool) itemExists;
     // array of bids , based on session ID
     mapping(uint => uint256[]) bids;
-    
+   
+    mapping(uint => Iparticipant[]) sessionParticipants;
     
     modifier onlyOwner{
         require(msg.sender == admin, "Only owner can execute this function");
@@ -124,7 +113,7 @@ contract Main is Shared{
 
     function addSession(
         uint256 _itemId
-    ) public onlyOwner returns(SessionStruct memory){
+    ) public onlyOwner returns(SessionStruct memory ){
         require(_itemId > 0, "Item ID cannot be empty");
         _totalSessions.increment();
         uint256 sessionId = _totalSessions.current();
@@ -137,8 +126,8 @@ contract Main is Shared{
         sessionOf[sessionId] = session;
         sessions.push(session);
         emit Action ("Add session successfully");
-        return session;
         
+        return session;
     }
     function updateSession(
         uint256 _sessionId,
