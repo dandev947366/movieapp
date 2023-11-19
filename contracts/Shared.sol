@@ -12,7 +12,6 @@ contract Shared{
         RUNNING,
         END
     }
-
     struct Item {
         uint256 id;
         string name;
@@ -35,6 +34,7 @@ contract Shared{
         bool completed;
         uint256 NoOfParticipant;
     }
+    // mapping based on sessionId
     mapping(uint256 => bool) sessionExists;
     mapping(uint => SessionStruct) sessionOf;
     mapping(uint => Iparticipant[]) participantList;

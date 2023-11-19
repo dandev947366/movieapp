@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Main.sol";
 import "./Shared.sol";
-
-
 contract Session is Shared {
    
     Main private mainContract;
@@ -18,13 +16,9 @@ contract Session is Shared {
     Counters.Counter private _NoOfSession;
     
     mapping(uint256 => mapping(address => uint256)) bids;
-   // mapping(uint256=> uint256[]) averageBidList ;
     constructor(address _mainContract) {
-        //to call Daapcinema functions
         mainContract = Main(_mainContract);
     }
-
-
     function joinSession(
         uint256 _sessionId
     ) public returns (Iparticipant memory) {
@@ -87,9 +81,6 @@ contract Session is Shared {
         uint256 _itemId,
         uint256 _amount
     ) public {
-        //require(itemExists[_id], "Item not found");
-        //require(sessionExists[sessionId], "Session not Exists");
-        //require(msg.value >= _amount, "Insufficient balance");
         require(
             participantOf[_sessionId].participantWallet == msg.sender,
             "Invalid participant."
