@@ -7,12 +7,16 @@ contract Shared{
 
     event Action (string actionType);
     Status public status;
+    address admin;
     enum Status {
         OPEN,
         RUNNING,
         END
     }
-    
+    modifier onlyOwner{
+        require(msg.sender == admin, "Only owner can execute this function");
+        _;
+    }
     struct Item {
         uint256 id;
         string name;

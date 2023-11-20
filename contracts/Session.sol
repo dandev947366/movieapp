@@ -6,10 +6,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Main.sol";
 import "./Shared.sol";
 
-//TODO: get Role access for Session.sol
-//TODO: update requirements for functions
-//TODO: update srs and sd
-//TODO: write test case
+
 contract Session is Shared {
    
     Main private mainContract;
@@ -19,18 +16,19 @@ contract Session is Shared {
     Counters.Counter private _totalItem;
     Counters.Counter private _NoOfParticipant;
     Counters.Counter private _NoOfSession;
-
     mapping(uint256 => mapping(address => uint256)) bids;
 
    // mapping(uint256=> uint256[]) averageBidList ;
     constructor(address _mainContract) {
         //to call Daapcinema functions
         mainContract = Main(_mainContract);
+        admin = msg.sender;
     }
     
     function joinSession(
         uint256 _sessionId
     ) public returns (Iparticipant memory) {
+        require(msg.sender != admin, "Owner not allow to join session");
         SessionStruct memory session = mainContract.getSession(_sessionId);
         require(
             session.NoOfParticipant < 10,
@@ -56,7 +54,7 @@ contract Session is Shared {
         return participantList[_sessionId];
     }
 
-    function calcFinalPrice(uint256 _sessionId) public view returns (uint256){
+    function calcFinalPrice(uint256 _sessionId) public view onlyOwner returns (uint256){
         // list of all participants
         Iparticipant[] memory pList = participantList[_sessionId];
     
@@ -85,7 +83,7 @@ contract Session is Shared {
         return average;
     }
 
-    function setWinner(uint _sessionId, address _participant) public {
+    function setWinner(uint _sessionId, address _participant) public onlyOwner {
         sessionOf[_sessionId].winner = _participant;
         emit Action("Set winner successfully");
     }
@@ -139,7 +137,7 @@ contract Session is Shared {
     function calcDeviation(
         address _participant,
         uint256 _sessionId
-    ) public view returns (int256) {
+    ) public onlyOwner view returns (int256) {
         //Source: https://vietnambiz.vn/do-lech-chuan-standard-deviation-la-gi-cong-thuc-tinh-do-lech-chuan-2019110216112891.htm
 
         int sId = castUintToInt(_sessionId);
@@ -176,12 +174,12 @@ contract Session is Shared {
         return deviation;
     }
 
-    function castUintToInt(uint256 value) public pure returns (int256) {
+    function castUintToInt(uint256 value) internal pure returns (int256) {
         require(value <= uint256(int256(-1)), "Value exceeds int256 range");
         return int256(value);
     }
 
-    function castIntToUint(int256 value) public pure returns (uint256) {
+    function castIntToUint(int256 value) internal pure returns (uint256) {
         require(value >= 0, "Value is negative"); // Check if the value is non-negative
         return uint256(value);
     }
