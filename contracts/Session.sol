@@ -6,7 +6,10 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Main.sol";
 import "./Shared.sol";
 
-
+//TODO: get Role access for Session.sol
+//TODO: update requirements for functions
+//TODO: update srs and sd
+//TODO: write test case
 contract Session is Shared {
    
     Main private mainContract;
