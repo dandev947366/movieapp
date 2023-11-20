@@ -21,19 +21,16 @@ contract Main is Shared{
     mapping(uint => Iparticipant[]) sessionParticipants;
     
     constructor(){admin = msg.sender;}
-    //function Main() public {admin = msg.sender;}
     
-    // Add a Session Contract address into Main Contract. Use to link Session with Main
     function createItem(
         string memory _name,
         string memory _description,
-        string memory _imageURI,
-        uint256 _initialPrice
+        string memory _imageURI
     ) public onlyOwner returns (Item memory){
         require(bytes(_name).length > 0, "Name cannot be empty");
         require(bytes(_description).length > 0, "Description cannot be empty");
         require(bytes(_imageURI).length > 0, "ImageURI cannot be empty");
-        //require(_initialPrice > 0, "Initial price cannot be empty");
+
         _totalItems.increment();
         uint256 itemId = _totalItems.current();
         Item memory item;
@@ -43,34 +40,30 @@ contract Main is Shared{
         item.owner = admin;
         item.imageURI = _imageURI;
         item.completed = false;
-        item.initialPrice = _initialPrice;
         items[itemId] = item;
         emit Action ("Create item successfully");
         return item;
     }
 
-    function getItem(uint256 itemId) public view returns(Item memory){
-        return items[itemId];
+    function getItem(uint256 _itemId) public view returns(Item memory){
+        require(_itemId > 0, "Item Id cannot be empty");
+        return items[_itemId];
     }
 
     function updateItem(
         uint256 _itemId,
         string memory _name,
         string memory _description,
-        string memory _imageURI,
-        uint256 _initialPrice
+        string memory _imageURI
     ) public onlyOwner returns(Item memory){
-        require(_itemId > 0, "Id cannot be empty");
+        require(_itemId > 0, "Item Id cannot be empty");
         require(bytes(_name).length > 0, "Name cannot be empty");
         require(bytes(_description).length > 0, "Description cannot be empty");
         require(bytes(_imageURI).length > 0, "ImageURI cannot be empty");
-        require(_initialPrice > 0, "Price cannot be empty");
         items[_itemId].id = _itemId;
         items[_itemId].name = _name;
         items[_itemId].description = _description;
         items[_itemId].imageURI = _imageURI;
-        items[_itemId].initialPrice = _initialPrice;
-        //items[_itemId].owner = admin;
         items[_itemId].completed = false;
         emit Action ("Update Item successfully");
         return items[_itemId];
@@ -78,14 +71,14 @@ contract Main is Shared{
     }
 
     function deleteItem(uint256 _itemId) public onlyOwner {
+        require(_itemId > 0, "Item Id cannot be empty");
         items[_itemId].deleted = true;
         emit Action("Item deleted successfully");
     }
 
-    function completeItem(uint256 _id) public onlyOwner{
-        //require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not a session contract");
-        
-        items[_id].completed = true;
+    function completeItem(uint256 _itemId) public onlyOwner{
+        require(_itemId > 0, "Item Id cannot be empty");
+        items[_itemId].completed = true;
         emit Action("Item completed successfully");
     
     }
@@ -93,7 +86,7 @@ contract Main is Shared{
     function addSession(
         uint256 _itemId
     ) public onlyOwner returns(SessionStruct memory ){
-        require(_itemId > 0, "Item ID cannot be empty");
+        require(_itemId > 0, "Item Id cannot be empty");
         _totalSessions.increment();
         uint256 sessionId = _totalSessions.current();
         SessionStruct memory session;
@@ -112,12 +105,13 @@ contract Main is Shared{
         uint256 _sessionId,
         Status _status
     ) public onlyOwner {
-        //require(sessionExists[_sessionId], "Session not found");
+        require(_sessionId > 0, "Session Id cannot be empty");
         sessionOf[_sessionId].status = _status;
         emit Action ("Update session successfully");
     }
 
     function getSession(uint256 _sessionId) public view returns (SessionStruct memory){
+        require(_sessionId > 0, "Session Id cannot be empty");
         return sessionOf[_sessionId];
     }
 
@@ -125,13 +119,13 @@ contract Main is Shared{
         return sessions;
     }
     function deleteSession(uint256 _sessionId) public onlyOwner{
-       // require(sessionExists[_sessionId], "Session not Exsists");
-        
+       require(_sessionId > 0, "Session Id cannot be empty");
         sessionOf[_sessionId].deleted = true;
         sessionExists[_sessionId] = false;
         emit Action ("Delete session successfully");
     }
     function completeSession(uint256 _sessionId) public onlyOwner{
+        require(_sessionId > 0, "Session Id cannot be empty");
         require(sessionExists[_sessionId], "Session not Exsists");
         sessionOf[_sessionId].status = Status.END;
         sessionOf[_sessionId].completed = true;

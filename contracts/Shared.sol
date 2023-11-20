@@ -26,7 +26,6 @@ contract Shared{
         string imageURI;
         bool completed;
         bool deleted;
-        uint256 initialPrice;
         uint256 finalPrice;
     }
 

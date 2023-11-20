@@ -18,9 +18,7 @@ contract Session is Shared {
     Counters.Counter private _NoOfSession;
     mapping(uint256 => mapping(address => uint256)) bids;
 
-   // mapping(uint256=> uint256[]) averageBidList ;
     constructor(address _mainContract) {
-        //to call Daapcinema functions
         mainContract = Main(_mainContract);
         admin = msg.sender;
     }
@@ -28,6 +26,7 @@ contract Session is Shared {
     function joinSession(
         uint256 _sessionId
     ) public returns (Iparticipant memory) {
+        require(_sessionId > 0, "Session ID cannot be empty");
         require(msg.sender != admin, "Owner not allow to join session");
         SessionStruct memory session = mainContract.getSession(_sessionId);
         require(
@@ -51,11 +50,12 @@ contract Session is Shared {
     function getParticipants(
         uint256 _sessionId
     ) public view returns (Iparticipant[] memory) {
+        require(_sessionId > 0, "Session ID cannot be empty");
         return participantList[_sessionId];
     }
 
     function calcFinalPrice(uint256 _sessionId) public view onlyOwner returns (uint256){
-        // list of all participants
+        require(_sessionId > 0, "Session ID cannot be empty");
         Iparticipant[] memory pList = participantList[_sessionId];
     
         uint256 bid;
@@ -71,8 +71,9 @@ contract Session is Shared {
         return finalPrice;
     }
 
-    // average bid price of a participant
     function getBidAverage(uint _sessionId, address _participant) public view returns (uint256){
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_participant != address(0), "Address cannot be empty");
         uint256[] memory bList = bidList[_sessionId][_participant];
         uint256 sum;
         uint256 average;
@@ -84,11 +85,14 @@ contract Session is Shared {
     }
 
     function setWinner(uint _sessionId, address _participant) public onlyOwner {
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_participant != address(0), "Address cannot be empty");
         sessionOf[_sessionId].winner = _participant;
         emit Action("Set winner successfully");
     }
 
     function getWinner(uint _sessionId) public view returns(address){
+        require(_sessionId > 0, "Session ID cannot be empty.");
         return sessionOf[_sessionId].winner;
     }
 
@@ -97,9 +101,9 @@ contract Session is Shared {
         uint256 _itemId,
         uint256 _amount
     ) public {
-        //require(itemExists[_id], "Item not found");
-        //require(sessionExists[sessionId], "Session not Exists");
-        //require(msg.value >= _amount, "Insufficient balance");
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_itemId > 0, "Item ID cannot be empty.");
+        require(_amount > 0, "Amount cannot be empty");
         require(
             participantOf[_sessionId].participantWallet == msg.sender,
             "Invalid participant."
@@ -123,6 +127,8 @@ contract Session is Shared {
         uint256 _sessionId,
         address _participant
     ) public view returns (uint256[] memory) {
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_participant != address(0), "Address cannot be empty");
         return bidList[_sessionId][_participant];
     }
 
@@ -130,6 +136,8 @@ contract Session is Shared {
         uint256 _sessionId,
         address _participant
     ) public view returns (uint256) {
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_participant != address(0), "Address cannot be empty");
         uint256[] memory totalBids = getBidList(_sessionId, _participant);
         return totalBids.length;
     }
@@ -139,7 +147,8 @@ contract Session is Shared {
         uint256 _sessionId
     ) public onlyOwner view returns (int256) {
         //Source: https://vietnambiz.vn/do-lech-chuan-standard-deviation-la-gi-cong-thuc-tinh-do-lech-chuan-2019110216112891.htm
-
+        require(_sessionId > 0, "Session ID cannot be empty.");
+        require(_participant != address(0), "Address cannot be empty");
         int sId = castUintToInt(_sessionId);
         uint256 total = getTotalBids(_sessionId, _participant);
         int256 totalNew = castUintToInt(total);
